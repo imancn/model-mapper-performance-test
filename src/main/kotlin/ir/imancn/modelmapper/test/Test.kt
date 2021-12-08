@@ -1,42 +1,47 @@
 package ir.imancn.modelmapper.test
 
+import org.dozer.DozerBeanMapper
 import org.modelmapper.ModelMapper
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Component
 import javax.annotation.PostConstruct
+import kotlin.system.measureTimeMillis
+import kotlin.time.measureTime
 
 @Component
 class Test(
         private val repository: Repository,
-        private val mapper: ModelMapper
+        private val modelMapper: ModelMapper
     ) {
 
+    private val dozer = DozerBeanMapper()
     private val logger = LoggerFactory.getLogger(javaClass.simpleName)
-    private val objCount = 100000
+    private val objCount = 10000000
 
     @PostConstruct
     fun start(){
         val dtoList = generateDtoList()
-        saveMappedDto(dtoList, MappingType.EXTENSION_FUNCTION)
-        saveMappedDto(dtoList, MappingType.MODEL_MAPPER)
+        saveEntities(dtoList, MappingType.DOZER)
+        saveEntities(dtoList, MappingType.MODEL_MAPPER)
+        saveEntities(dtoList, MappingType.EXTENSION_FUNCTION)
     }
 
-    private fun saveMappedDto(dtoList: List<Dto>, mappingType: MappingType) {
+    private fun saveEntities(dtoList: List<Dto>, mappingType: MappingType) {
         logger.info("Map $objCount Objects with $mappingType started.")
-        val entities = mutableListOf<Entity>()
-        val startTime = System.currentTimeMillis()
-        dtoList.forEach { dto ->
-            dto.mappingType = mappingType
-            when (mappingType){
-                MappingType.MODEL_MAPPER -> entities.add(mapper.map(dto, Entity::class.java))
-                MappingType.EXTENSION_FUNCTION -> entities.add(dto.toEntity())
+        measureTimeMillis {
+            val entities = dtoList.map { dto ->
+                dto.mappingType = mappingType
+                when (mappingType) {
+                    MappingType.DOZER -> dozer.map(dto, Entity::class.java)
+                    MappingType.MODEL_MAPPER -> modelMapper.map(dto, Entity::class.java)
+                    MappingType.EXTENSION_FUNCTION -> dto.toEntity()
+                }
             }
+        }.let {
+            logger.info("Map $objCount Objects with $mappingType ended and take ${it / 1000.000} sec time.")
         }
-        val endTime = System.currentTimeMillis()
-        logger.info("Map $objCount Objects with $mappingType ended.")
-        logger.info("Map $objCount Objects with $mappingType take ${(endTime - startTime) / 1000.000} sec time.")
-        val savedEntities = repository.saveAll(entities)
-        logger.info("${savedEntities.size} has been saved.")
+//        val savedEntities = repository.saveAll(entities)
+//        logger.info("${savedEntities.size} has been saved.")
         logger.info("#########################################################")
     }
 

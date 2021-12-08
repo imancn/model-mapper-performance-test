@@ -17,5 +17,6 @@ class Dto(name: String, age: Int) {
 
 enum class MappingType {
     MODEL_MAPPER,
-    EXTENSION_FUNCTION
+    EXTENSION_FUNCTION,
+    DOZER
 }
