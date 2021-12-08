@@ -1,2 +1,2 @@
 # model-mapper-performance-test
-A spring-kotlin project for testing ModelMapper lib performance
+A project to find best way to map objects in Kotlin/Spring
