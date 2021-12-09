@@ -1,5 +1,9 @@
-package ir.imancn.modelmapper.test
+package ir.imancn.modelmapper
 
+import ir.imancn.modelmapper.config.JMapperBeans
+import ir.imancn.modelmapper.model.Dto
+import ir.imancn.modelmapper.model.Entity
+import ir.imancn.modelmapper.model.MappingType
 import org.dozer.DozerBeanMapper
 import org.modelmapper.ModelMapper
 import org.slf4j.LoggerFactory
