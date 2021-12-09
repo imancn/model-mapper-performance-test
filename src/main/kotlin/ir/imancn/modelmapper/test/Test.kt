@@ -6,34 +6,45 @@ import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Component
 import javax.annotation.PostConstruct
 import kotlin.system.measureTimeMillis
-import kotlin.time.measureTime
 
 @Component
 class Test(
         private val repository: Repository,
-        private val modelMapper: ModelMapper
+        private val modelMapper: ModelMapper,
+        private val jMapper: JMapperBeans
     ) {
 
     private val dozer = DozerBeanMapper()
     private val logger = LoggerFactory.getLogger(javaClass.simpleName)
-    private val objCount = 10000000
+    private val objCount = 10_000_000
 
     @PostConstruct
     fun start(){
         val dtoList = generateDtoList()
+
+        // Mapping Time + Configuration Time
         saveEntities(dtoList, MappingType.DOZER)
         saveEntities(dtoList, MappingType.MODEL_MAPPER)
+        saveEntities(dtoList, MappingType.JMAPPER)
+
         saveEntities(dtoList, MappingType.EXTENSION_FUNCTION)
+
+        // Just Mapping Time
+        saveEntities(dtoList, MappingType.JMAPPER)
+        saveEntities(dtoList, MappingType.MODEL_MAPPER)
+        saveEntities(dtoList, MappingType.DOZER)
     }
 
     private fun saveEntities(dtoList: List<Dto>, mappingType: MappingType) {
         logger.info("Map $objCount Objects with $mappingType started.")
+        var entities = listOf<Entity>()
         measureTimeMillis {
-            val entities = dtoList.map { dto ->
+            entities = dtoList.map { dto ->
                 dto.mappingType = mappingType
                 when (mappingType) {
                     MappingType.DOZER -> dozer.map(dto, Entity::class.java)
                     MappingType.MODEL_MAPPER -> modelMapper.map(dto, Entity::class.java)
+                    MappingType.JMAPPER -> jMapper.convertDtoToEntity().getDestination(dto)
                     MappingType.EXTENSION_FUNCTION -> dto.toEntity()
                 }
             }
@@ -49,7 +60,7 @@ class Test(
         val nameList = initNameList()
         val dtoList = mutableListOf<Dto>()
         for (i in 1 .. objCount) {
-            val dto = Dto(nameList.random(), (Math.random() * 80).toInt())
+            val dto = Dto(nameList.random(), (Math.random() * 60).toInt() + 15)
             dtoList.add(dto)
         }
         return dtoList

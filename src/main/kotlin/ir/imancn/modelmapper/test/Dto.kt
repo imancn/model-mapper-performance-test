@@ -1,10 +1,22 @@
 package ir.imancn.modelmapper.test
 
-class Dto(name: String, age: Int) {
+import com.googlecode.jmapper.annotations.JMap
 
-    var name: String? = name
-    var age: Int? = age
+class Dto{
+    @JMap
+    var name: String? = null
+    @JMap
+    var age: Int? = null
+    @JMap
     var mappingType: MappingType? = null
+
+    constructor()
+
+    constructor(name: String, age: Int) : this() {
+        this.name = name
+        this.age = age
+        this.mappingType = null
+    }
 
     fun toEntity(): Entity {
         val entity = Entity()
@@ -15,8 +27,3 @@ class Dto(name: String, age: Int) {
     }
 }
 
-enum class MappingType {
-    MODEL_MAPPER,
-    EXTENSION_FUNCTION,
-    DOZER
-}
