@@ -13,7 +13,6 @@ import kotlin.system.measureTimeMillis
 
 @Component
 class Test(
-        private val repository: Repository,
         private val modelMapper: ModelMapper,
         private val jMapper: JMapperBeans
     ) {
@@ -27,23 +26,22 @@ class Test(
         val dtoList = generateDtoList()
 
         // Mapping Time + Configuration Time
-        saveEntities(dtoList, MappingType.DOZER)
-        saveEntities(dtoList, MappingType.MODEL_MAPPER)
-        saveEntities(dtoList, MappingType.JMAPPER)
+        map(dtoList, MappingType.DOZER)
+        map(dtoList, MappingType.MODEL_MAPPER)
+        map(dtoList, MappingType.JMAPPER)
 
-        saveEntities(dtoList, MappingType.EXTENSION_FUNCTION)
+        map(dtoList, MappingType.EXTENSION_FUNCTION)
 
         // Just Mapping Time
-        saveEntities(dtoList, MappingType.JMAPPER)
-        saveEntities(dtoList, MappingType.MODEL_MAPPER)
-        saveEntities(dtoList, MappingType.DOZER)
+        map(dtoList, MappingType.JMAPPER)
+        map(dtoList, MappingType.MODEL_MAPPER)
+        map(dtoList, MappingType.DOZER)
     }
 
-    private fun saveEntities(dtoList: List<Dto>, mappingType: MappingType) {
+    private fun map(dtoList: List<Dto>, mappingType: MappingType) {
         logger.info("Map $objCount Objects with $mappingType started.")
-        var entities = listOf<Entity>()
         measureTimeMillis {
-            entities = dtoList.map { dto ->
+            dtoList.map { dto ->
                 dto.mappingType = mappingType
                 when (mappingType) {
                     MappingType.DOZER -> dozer.map(dto, Entity::class.java)
@@ -55,8 +53,6 @@ class Test(
         }.let {
             logger.info("Map $objCount Objects with $mappingType ended and take ${it / 1000.000} sec time.")
         }
-//        val savedEntities = repository.saveAll(entities)
-//        logger.info("${savedEntities.size} has been saved.")
         logger.info("#########################################################")
     }
 
