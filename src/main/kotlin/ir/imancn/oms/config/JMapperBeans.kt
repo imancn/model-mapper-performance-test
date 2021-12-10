@@ -1,9 +1,9 @@
-package ir.imancn.modelmapper.config
+package ir.imancn.oms.config
 
 import com.googlecode.jmapper.JMapper
 import com.googlecode.jmapper.api.JMapperAPI
-import ir.imancn.modelmapper.model.Dto
-import ir.imancn.modelmapper.model.Entity
+import ir.imancn.oms.model.Dto
+import ir.imancn.oms.model.Entity
 import org.springframework.context.annotation.Bean
 import org.springframework.stereotype.Component
 

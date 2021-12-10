@@ -1,11 +1,11 @@
-package ir.imancn.modelmapper
+package ir.imancn.oms
 
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.runApplication
 
 @SpringBootApplication
-class ModelMapperApplication
+class ObjectMappingSolutionApplication
 
 fun main(args: Array<String>) {
-	runApplication<ModelMapperApplication>(*args)
+	runApplication<ObjectMappingSolutionApplication>(*args)
 }

@@ -1,4 +1,4 @@
-package ir.imancn.modelmapper.model
+package ir.imancn.oms.model
 
 enum class MappingType {
     MODEL_MAPPER,

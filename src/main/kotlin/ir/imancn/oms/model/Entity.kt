@@ -1,4 +1,4 @@
-package ir.imancn.modelmapper.model
+package ir.imancn.oms.model
 
 import com.googlecode.jmapper.annotations.JMap
 import java.util.*
